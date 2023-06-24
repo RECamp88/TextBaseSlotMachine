@@ -1,7 +1,65 @@
+import random
+
+""" 
+GENERAL OVERALL NOTES: 
+
+1. Using the _ in the for loops: 
+    The _ can be used because that variable is not being used for anything 
+    other than iterating through the loop. If you were needing to use that variable for example: 
+    for i in range(10)
+       do_something(i)
+    then an actual variable name would need to be declared.  In this program you will see a lot of uses of 
+    the _ in the for loops. 
+    
+ 2. using the 'f' in the print or input statements: 
+    This is being done to allow for interprolated variables 
+    to be used within the string.  Many times this is much easier than the traditional ("string" + variable + "remainder of the string").  Although it may not always be able to be used, in the cases in this program when including variables in the strings that will be printed to the screen, it is much easier. 
+   
+"""
+
+# these are global variables and typically in good practice we would captialize these variable names
 MAX_LINES = 3
 MAX_BET = 100
 MIN_BET = 1
 
+ROWS = 3 
+COLS = 3
+
+# This is a dictionary syntax which offers a key - value pair
+symbol_count = {
+    "A": 2,
+    "J": 8,
+    "Q": 6,
+    "K": 4
+}
+
+def get_slot_machine_spin(row, cols, symbols):
+    # First we are loading the symbols into a list from the dictionary
+    all_symbols = []
+    for symbol, symbol_count in symbols.items():
+        for _ in range(symbol_count):
+            all_symbols.append(symbol)
+    
+    # Normally we would think of this as rows, but since we are generating each column on a reel, 
+    # we are creating a list of lists to refer to the reels. 
+    columns = [[],[],[]]
+    # this outer loop handles each of the columns as we are using 3 reels this would be 3 columns
+    for _ in range(COLS):
+        column=[]
+        
+        # Using the [:] actually copies the list instead of referencing 
+        # This is needed to keep from changes affecting the original list of all_symbols
+        current_symbols = all_symbols[:]
+        
+        # This inner loop is getting the symbols for each row for each column
+        for _ in range(ROWS):
+            value = random.choice(current_symbols)
+            current_symbols.remove(value)
+            column.append(value)
+        columns.append(column)
+    return columns
+
+# function to get the deposit amount from the user             
 def deposit(): 
     while True: 
         amount = input("What would you like to deposit? $")
@@ -14,6 +72,8 @@ def deposit():
         else: 
             print("Please enter a number.")
     return amount
+
+# function to get the number of lines user wants to bet on. 
 def get_number_of_lines(): 
     while True: 
         lines = input("Enter the number of lines to bet on (1-" + str(MAX_LINES) +")? ")
@@ -26,6 +86,8 @@ def get_number_of_lines():
         else: 
             print("Please enter a number.")
     return lines
+
+# function to get the amount the user wants to bet on each line
 def get_bet():
     while True: 
         amount = input("What would you like to bet on each line? $")
@@ -37,10 +99,14 @@ def get_bet():
                 print(f"Amount must be between ${MIN_BET} and ${MAX_BET}." )
         else: 
             print("Please enter a number.")
-    return amount   
+    return amount 
+
+# this is the main function where all the others are called from 
 def main():
     balance = deposit()
     lines = get_number_of_lines()
+    # this statement is checking to see if the amount the user wants to bet is more than the 
+    # available balance. 
     while True: 
         bet= get_bet()
         total_bet= lines * bet
