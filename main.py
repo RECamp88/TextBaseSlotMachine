@@ -33,7 +33,7 @@ symbol_count = {
     "K": 4
 }
 
-def get_slot_machine_spin(row, cols, symbols):
+def get_slot_machine_spin(rows, cols, symbols):
     # First we are loading the symbols into a list from the dictionary
     all_symbols = []
     for symbol, symbol_count in symbols.items():
@@ -42,7 +42,7 @@ def get_slot_machine_spin(row, cols, symbols):
     
     # Normally we would think of this as rows, but since we are generating each column on a reel, 
     # we are creating a list of lists to refer to the reels. 
-    columns = [[],[],[]]
+    columns = []
     # this outer loop handles each of the columns as we are using 3 reels this would be 3 columns
     for _ in range(COLS):
         column=[]
@@ -52,12 +52,24 @@ def get_slot_machine_spin(row, cols, symbols):
         current_symbols = all_symbols[:]
         
         # This inner loop is getting the symbols for each row for each column
-        for _ in range(ROWS):
+        for _ in range(rows):
             value = random.choice(current_symbols)
             current_symbols.remove(value)
             column.append(value)
         columns.append(column)
     return columns
+
+#Function to print out the reels
+def print_slot_machine(columns):
+    # this for loop will be transposing the matrix
+    for row in range(len(columns[0])):
+        # The enumerate will index which we can use to determine if we are at the end of a list
+        for i, column in enumerate(columns): 
+            if i != len(columns)-1:
+                print(column[row], end=" | ")
+            else: 
+                print(column[row], end="")
+        print()
 
 # function to get the deposit amount from the user             
 def deposit(): 
@@ -119,5 +131,7 @@ def main():
     
     print(f"You are betting ${bet} on {lines}. Total bet is equal to: ${total_bet}")
     
+    slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
+    print_slot_machine(slots)
 
 main()
