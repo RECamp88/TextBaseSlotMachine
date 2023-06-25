@@ -46,10 +46,12 @@ symbol_value = {
 #This function is checking to see if there are any winning
 def check_winnings(columns, lines, bet, values):
     winnings = 0
+    winning_lines = []
     # because line will always start at 0, its fine for the range
     # range will be up to but not including the number in the ()
     # so if the user bets 1 line, line starts at zero and it iterates up to but not including the 1 in the range.
     for line in range(lines):
+        # what symbol are we checking for in the first column of the current row?
         symbol = columns[0][line]
         # this is iterating through to see if there is a matching symbol across the row that has been betted on. 
         for column in columns: 
@@ -61,7 +63,8 @@ def check_winnings(columns, lines, bet, values):
         # else we want to calculate the winnings
         else: 
             winnings += values[symbol] * bet
-    return winnings
+            winning_lines.append(lines + 1)
+    return winnings, winning_lines
 
 def get_slot_machine_spin(rows, cols, symbols):
     # First we are loading the symbols into a list from the dictionary
@@ -143,9 +146,7 @@ def get_bet():
             print("Please enter a number.")
     return amount 
 
-# this is the main function where all the others are called from 
-def main():
-    balance = deposit()
+def spin(balance):
     lines = get_number_of_lines()
     # this statement is checking to see if the amount the user wants to bet is more than the 
     # available balance. 
@@ -157,11 +158,29 @@ def main():
             print(f"You do not have enough to bet that amount, your current balance is: ${balance}")
         else: 
             break
-    
-    
+        
     print(f"You are betting ${bet} on {lines}. Total bet is equal to: ${total_bet}")
     
     slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
     print_slot_machine(slots)
-
+    # Because check_winnings returns 2 values. 
+    winnings, winning_lines = check_winnings(slots, lines, bet, symbol_value)
+    print(f"You won: ${winnings}.")
+    # this formating with the * will print the list on one line instead of a new line for every element. 
+    print(f"You won on lines: ", *winning_lines)
+    
+    return winnings - total_bet
+    
+# this is the main function where all the others are called from 
+def main():
+    balance = deposit()       
+    while True: 
+        print(f"Current balance is: ${balance}")
+        answer = input("Press enter to play (q to quit).")
+        if answer == "q": 
+            break
+        balance += spin(balance)
+        
+    print(f"You left with: ${balance}")
+        
 main()
