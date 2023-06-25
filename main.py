@@ -26,12 +26,42 @@ ROWS = 3
 COLS = 3
 
 # This is a dictionary syntax which offers a key - value pair
+# This is the amount of these symbols available for each reel. 
 symbol_count = {
     "A": 2,
     "J": 8,
     "Q": 6,
     "K": 4
 }
+
+# This dictionary represents the value of each symbol if there is a match across a row. 
+# If there is a row match then bet will be multiplied by the number here. 
+symbol_value = {
+    "A": 5,
+    "J": 2,
+    "Q": 3,
+    "K": 4
+}
+
+#This function is checking to see if there are any winning
+def check_winnings(columns, lines, bet, values):
+    winnings = 0
+    # because line will always start at 0, its fine for the range
+    # range will be up to but not including the number in the ()
+    # so if the user bets 1 line, line starts at zero and it iterates up to but not including the 1 in the range.
+    for line in range(lines):
+        symbol = columns[0][line]
+        # this is iterating through to see if there is a matching symbol across the row that has been betted on. 
+        for column in columns: 
+            symbol_to_check = column[line]
+            # if there first and second symbols don't match then no need to go on 
+            if symbol != symbol_to_check:
+                break
+        # normally the else would be right below the if, but in this case we want to break if no match
+        # else we want to calculate the winnings
+        else: 
+            winnings += values[symbol] * bet
+    return winnings
 
 def get_slot_machine_spin(rows, cols, symbols):
     # First we are loading the symbols into a list from the dictionary
